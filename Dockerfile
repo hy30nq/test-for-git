@@ -1,26 +1,35 @@
 ###############################################################################
-# Git-based CTF - Sample Exploit
+# Git-based CTF - Sample Vulnerable Service
 ###############################################################################
 
-FROM debian:stable-slim
+FROM --platform=linux/amd64 debian:latest
 
 # ======================================
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         python3 \
-        python3-pip && \
+        python3-pip \
+        iputils-ping && \
     rm -rf /var/lib/apt/lists/*
 # ======================================
 
-WORKDIR /opt/exploit
+RUN mkdir -p /var/ctf
+COPY flag /var/ctf/
+
+WORKDIR /srv/app
 
 COPY requirements.txt .
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY exploit.py /bin/exploit
-RUN chmod +x /bin/exploit
+COPY app/ /srv/app
 
-ENTRYPOINT [ "/bin/exploit" ]
+ENV FLASK_APP=server.py \
+    FLASK_RUN_HOST=0.0.0.0 \
+    FLASK_RUN_PORT=5000
+
+EXPOSE 5000
+
+ENTRYPOINT [ "flask", "run" ]
 
