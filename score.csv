@@ -1,1 +1,4 @@
-{"test": 1}
+timestamp,attacker,defender,branch,kind,points
+1700000000.0,team1,team2,bug1,intended,50
+1700000300.0,team2,team1,bug2,intended,50
+1700000600.0,team1,team2,bug1,unintended,150
